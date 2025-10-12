@@ -1,0 +1,6 @@
+stages:
+  download_data:
+    cmd: python scripts/download_data.py
+    outs:
+    - data/cifar10
+    - data/sst2

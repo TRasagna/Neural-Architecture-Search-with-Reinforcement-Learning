@@ -1,0 +1,196 @@
+# Full CIFAR-10 Search with Ray Tune
+name: "nas_rl_cifar10_full"
+seed: 42
+
+# Dataset Configuration
+dataset:
+  name: "cifar10"
+  data_dir: "./data/cifar10"
+  download: true
+  num_classes: 10
+
+  # Full dataset
+  train_samples: 45000  # Leave 5K for validation
+  val_samples: 5000
+  test_samples: 10000
+
+  # Data loading
+  batch_size: 128
+  num_workers: 4
+  pin_memory: true
+
+# Search Configuration
+search:
+  controller_type: "rnn"  # rnn | transformer
+  search_space: "cnn_full"  # Full CNN search space
+
+  # Main search parameters
+  num_architectures: 2000  # Total architectures to evaluate
+  max_epochs_per_arch: 50
+  early_stopping_patience: 5
+
+  # Progressive search strategy
+  progressive_search: true
+  start_layers: 3
+  max_layers: 12
+  layer_increment_every: 200  # architectures
+
+  # Weight sharing & efficiency
+  use_weight_sharing: true
+  supernet_epochs: 200
+  parameter_reuse: true
+
+  # Multi-objective optimization
+  objectives:
+    - name: "accuracy"
+      weight: 0.7
+      maximize: true
+    - name: "flops"  
+      weight: 0.2
+      maximize: false
+    - name: "latency"
+      weight: 0.1
+      maximize: false
+
+# Controller Configuration
+controller:
+  hidden_size: 256
+  num_layers: 2
+  learning_rate: 3.5e-4
+  entropy_weight: 1e-4
+  baseline_decay: 0.999
+
+  # Advanced training
+  controller_steps: 100
+  steps_aggregate: 20
+  use_ppo: false  # Use REINFORCE
+  ppo_epochs: 4
+  ppo_clip: 0.2
+
+# Child Model Configuration
+child:
+  # Optimization
+  optimizer: "adamw"
+  learning_rate: 1e-3
+  weight_decay: 5e-4
+  lr_scheduler: "cosine"
+  warmup_epochs: 5
+
+  # Training techniques
+  label_smoothing: 0.1
+  mixup_alpha: 0.2
+  cutmix_alpha: 1.0
+
+  # Data augmentation
+  augmentation: "autoaugment"  # basic | autoaugment | randaugment
+
+  # Regularization
+  drop_path_rate: 0.1
+  dropout_rate: 0.1
+
+# Ray Configuration
+ray:
+  use_ray: true
+
+  # Cluster configuration
+  num_cpus_per_trial: 4
+  num_gpus_per_trial: 1
+  max_concurrent_trials: 4
+
+  # Advanced Ray settings
+  local_dir: "./ray_results"
+
+  # Scheduler (ASHA for early stopping)
+  scheduler:
+    type: "asha"
+    max_t: 50  # max epochs
+    grace_period: 10  # min epochs before stopping
+    reduction_factor: 2
+
+  # Search algorithm
+  search_alg:
+    type: "bayesian"  # random | bayesian | hyperopt
+
+  # Resource allocation
+  cluster_compute:
+    min_workers: 1
+    max_workers: 8
+    idle_timeout_minutes: 30
+
+# MLOps Configuration
+mlops:
+  # Experiment tracking
+  use_wandb: true
+  wandb_project: "nas-rl-cifar10"
+  wandb_entity: "your-team"
+
+  use_mlflow: false
+  mlflow_tracking_uri: "http://mlflow:5000"
+
+  # Model registry
+  model_registry: "wandb"  # wandb | mlflow
+  register_best_n: 5
+
+  # Data versioning
+  use_dvc: true
+  dvc_remote: "storage"
+
+  # Logging
+  log_level: "INFO"
+  log_every_n_steps: 50
+  log_gradients: false
+  log_weights: false
+
+  # Checkpointing
+  save_checkpoints: true
+  checkpoint_dir: "./checkpoints/cifar10"
+  checkpoint_every_n_epochs: 10
+
+# Compute Resources
+compute:
+  precision: 16  # Mixed precision training
+  max_memory_gb: 16
+  gradient_clip: 1.0
+
+  # Multi-GPU settings (if available)
+  strategy: "ddp"  # ddp | ddp_spawn | fsdp
+  sync_batchnorm: true
+
+# Output Configuration
+output:
+  experiment_dir: "./experiments/cifar10_full"
+  save_architectures: true  
+  save_metrics: true
+  save_predictions: false
+
+  # Result analysis
+  create_reports: true
+  plot_search_progress: true
+  architecture_visualization: true
+
+# Monitoring & Alerts
+monitoring:
+  prometheus_port: 8080
+  metrics_prefix: "nas_rl"
+
+  # Alerts via webhooks
+  webhook_url: null  # Set for Slack/Discord notifications
+  alert_on_failure: true
+  alert_on_completion: true
+
+# Debugging & Profiling
+debug:
+  fast_dev_run: false
+  overfit_batches: 0
+  profiler: null
+
+  # Memory debugging
+  track_memory: false
+  detect_anomaly: false
+
+# Cost Optimization
+cost_optimization:
+  use_spot_instances: true
+  max_cost_per_hour: 50.0  # USD
+  auto_scale_down: true
+  idle_shutdown_minutes: 60

@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+
+# PyTorch
+*.pth
+*.pt
+*.ckpt
+
+# Environment
+.env
+.venv
+env/
+venv/
+
+# Data & Experiments
+data/
+experiments/
+checkpoints/
+ray_results/
+mlruns/
+wandb/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db

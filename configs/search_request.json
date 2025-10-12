@@ -1,0 +1,28 @@
+{
+  "search_name": "custom_search_001",
+  "config": {
+    "dataset": {
+      "name": "cifar10",
+      "batch_size": 128
+    },
+    "search": {
+      "num_architectures": 100,
+      "max_epochs_per_arch": 20,
+      "search_space": "cnn_basic"
+    },
+    "controller": {
+      "type": "rnn",
+      "hidden_size": 128
+    },
+    "ray": {
+      "num_gpus_per_trial": 1,
+      "max_concurrent_trials": 2
+    },
+    "mlops": {
+      "wandb_project": "nas-rl-custom",
+      "experiment_tags": ["custom", "api_triggered"]
+    }
+  },
+  "priority": "normal",
+  "notification_webhook": "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+}

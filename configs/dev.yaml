@@ -1,0 +1,94 @@
+# Development Configuration - Quick local testing
+name: "nas_rl_dev"
+seed: 42
+
+# Dataset Configuration
+dataset:
+  name: "cifar10"
+  data_dir: "./data/cifar10"
+  download: true
+  num_classes: 10
+
+  # Small subset for quick testing
+  train_samples: 1000  # Use only 1K samples
+  val_samples: 200
+
+  # Data loading
+  batch_size: 32
+  num_workers: 2
+  pin_memory: false
+
+# Search Configuration
+search:
+  controller_type: "rnn"  # rnn | transformer
+  search_space: "cnn_basic"  # cnn_basic | cnn_full | transformer
+
+  # Quick dev search
+  num_architectures: 10
+  max_epochs_per_arch: 3
+  early_stopping_patience: 2
+
+  # Weight sharing
+  use_weight_sharing: true
+  supernet_epochs: 5
+
+# Controller Configuration
+controller:
+  hidden_size: 64
+  num_layers: 1
+  learning_rate: 3e-4
+  entropy_weight: 1e-4
+  baseline_decay: 0.95
+
+  # Training
+  controller_steps: 5
+  steps_aggregate: 2
+
+# Child Model Configuration  
+child:
+  # Quick training for dev
+  optimizer: "adam"
+  learning_rate: 1e-3
+  weight_decay: 1e-4
+  lr_scheduler: "cosine"
+
+  # Data augmentation (light)
+  augmentation: "basic"
+
+# Ray Configuration (Local)
+ray:
+  use_ray: false  # Run locally for dev
+  num_cpus: 2
+  num_gpus: 1 if torch.cuda.is_available() else 0
+
+# MLOps Configuration (Minimal)
+mlops:
+  # Experiment tracking
+  use_wandb: false  # Set to true if you have W&B key
+  use_mlflow: false  # Local only for dev
+
+  # Logging
+  log_level: "INFO"
+  log_every_n_steps: 10
+
+  # Checkpointing
+  save_checkpoints: true
+  checkpoint_dir: "./checkpoints/dev"
+
+# Compute Resources
+compute:
+  precision: 16  # Mixed precision
+  max_memory_gb: 4
+  gradient_clip: 1.0
+
+# Output Configuration
+output:
+  experiment_dir: "./experiments/dev"
+  save_architectures: true
+  save_metrics: true
+
+# Debugging
+debug:
+  fast_dev_run: false
+  overfit_batches: 0
+  profiler: null  # "simple" | "advanced" | null

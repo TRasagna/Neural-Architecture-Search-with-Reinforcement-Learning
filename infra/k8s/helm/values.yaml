@@ -1,0 +1,19 @@
+# Default values for nas-rl
+replicaCount: 1
+
+image:
+  repository: nas-rl
+  tag: "latest"
+
+service:
+  type: ClusterIP
+  port: 8000
+
+resources:
+  limits:
+    cpu: 4
+    memory: 8Gi
+    nvidia.com/gpu: 1
+  requests:
+    cpu: 2
+    memory: 4Gi

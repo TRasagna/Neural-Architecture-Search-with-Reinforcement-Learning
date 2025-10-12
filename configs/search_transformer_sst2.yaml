@@ -1,0 +1,163 @@
+# Transformer Architecture Search on SST-2
+name: "nas_rl_transformer_sst2"
+seed: 42
+
+# Dataset Configuration  
+dataset:
+  name: "sst2"
+  data_dir: "./data/sst2"
+  download: true
+  num_classes: 2  # Binary sentiment
+
+  # Tokenizer settings
+  tokenizer: "bert-base-uncased"
+  max_length: 128
+  padding: "max_length"
+  truncation: true
+
+  # Data split
+  train_samples: 60000  # Full SST-2 train
+  val_samples: 5000
+  test_samples: 1821    # Full SST-2 test
+
+  # Data loading
+  batch_size: 64
+  num_workers: 4
+  pin_memory: true
+
+# Search Configuration
+search:
+  controller_type: "transformer"  # Better for transformer search
+  search_space: "transformer_encoder"
+
+  # Search parameters
+  num_architectures: 500
+  max_epochs_per_arch: 25
+  early_stopping_patience: 5
+
+  # Transformer-specific progressive search
+  progressive_search: true
+  start_layers: 2
+  max_layers: 8
+  layer_increment_every: 100
+
+  # Weight sharing for transformers
+  use_weight_sharing: true
+  supernet_epochs: 100
+  parameter_reuse: true
+
+  # Multi-objective for transformers
+  objectives:
+    - name: "f1_score"
+      weight: 0.8
+      maximize: true
+    - name: "params"
+      weight: 0.15
+      maximize: false  
+    - name: "inference_time"
+      weight: 0.05
+      maximize: false
+
+# Controller Configuration (Transformer-based)
+controller:
+  # Architecture
+  d_model: 256
+  num_heads: 8
+  num_layers: 3
+  d_ff: 1024
+  dropout: 0.1
+
+  # Training
+  learning_rate: 1e-4
+  warmup_steps: 1000
+  entropy_weight: 1e-4
+  baseline_decay: 0.999
+
+  # Controller training
+  controller_steps: 50
+  steps_aggregate: 10
+
+# Child Model Configuration (Transformer)
+child:
+  # Model architecture bounds
+  min_layers: 1
+  max_layers: 12
+  min_hidden_size: 128
+  max_hidden_size: 1024
+  min_num_heads: 2
+  max_num_heads: 16
+  min_ff_dim: 256
+  max_ff_dim: 4096
+
+  # Training
+  optimizer: "adamw"
+  learning_rate: 2e-5
+  weight_decay: 0.01
+  lr_scheduler: "linear"
+  warmup_ratio: 0.1
+
+  # Regularization
+  dropout: 0.1
+  attention_dropout: 0.1
+  hidden_dropout: 0.1
+
+  # Advanced techniques
+  gradient_checkpointing: true
+
+# Ray Configuration
+ray:
+  use_ray: true
+
+  # Resource allocation
+  num_cpus_per_trial: 4
+  num_gpus_per_trial: 1
+  max_concurrent_trials: 4
+
+  # Scheduler
+  scheduler:
+    type: "asha"
+    max_t: 25
+    grace_period: 5
+    reduction_factor: 2
+
+  # Advanced settings
+  local_dir: "./ray_results/transformer"
+
+# MLOps Configuration
+mlops:
+  use_wandb: true
+  wandb_project: "nas-rl-transformer-sst2"
+
+  # HuggingFace integration
+  hf_model_name: "nas-transformer-sst2"
+  push_to_hub: false
+
+  # Logging
+  log_level: "INFO"
+  log_every_n_steps: 25
+
+  # Checkpointing  
+  save_checkpoints: true
+  checkpoint_dir: "./checkpoints/transformer_sst2"
+
+# Compute Resources
+compute:
+  precision: 16
+  max_memory_gb: 12
+  gradient_clip: 1.0
+  accumulate_grad_batches: 2
+
+# Output Configuration
+output:
+  experiment_dir: "./experiments/transformer_sst2"
+  save_architectures: true
+  save_metrics: true
+
+  # Transformer-specific outputs
+  save_attention_weights: false
+  create_model_cards: true
+
+# Monitoring
+monitoring:
+  prometheus_port: 8081
+  metrics_prefix: "nas_rl_transformer"

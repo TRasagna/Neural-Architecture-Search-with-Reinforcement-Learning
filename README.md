@@ -1,6 +1,6 @@
 # NAS-RL: Neural Architecture Search with Reinforcement Learning
 
-[![CI](https://github.com/your-org/nas-rl/actions/workflows/ci.yml/badge.svg)](https://github.com/your-org/nas-rl/actions/workflows/ci.yml)
+[![CI](https://github.com/TRasagna/Neural-Architecture-Search-with-Reinforcement-Learning/actions/workflows/ci.yml/badge.svg)](https://github.com/TRasagna/Neural-Architecture-Search-with-Reinforcement-Learning/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
@@ -48,8 +48,8 @@ nas-rl/
 
 ```bash
 # 1. Clone and setup
-git clone https://github.com/your-org/nas-rl.git
-cd nas-rl
+git clone https://github.com/TRasagna/Neural-Architecture-Search-with-Reinforcement-Learning.git
+cd Neural-Architecture-Search-with-Reinforcement-Learning
 pip install -r requirements.txt
 
 # 2. Download data
@@ -303,9 +303,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/your-org/nas-rl/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-org/nas-rl/discussions)
-- **Documentation**: [Full Docs](https://nas-rl.readthedocs.io/)
+- **Issues**: [GitHub Issues](https://github.com/TRasagna/Neural-Architecture-Search-with-Reinforcement-Learning/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/TRasagna/Neural-Architecture-Search-with-Reinforcement-Learning/discussions)
 
 ---
 
